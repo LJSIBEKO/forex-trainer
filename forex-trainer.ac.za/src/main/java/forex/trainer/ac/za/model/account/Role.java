@@ -5,4 +5,5 @@ public enum Role
     ADMINISTRATOR,
     SUPER_ADMINISTRATOR,
     CUSTOMER,
+    COACH
 }

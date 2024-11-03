@@ -1,5 +1,6 @@
 package forex.trainer.ac.za.config.jwt;
 
+import forex.trainer.ac.za.exception.RequestException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,7 @@ public class JwtUtil
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
+                .setIssuer("Forex Trainer")
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
@@ -38,7 +40,12 @@ public class JwtUtil
 
     // Extract Username
     public String extractUsername(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        try {
+            return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        } catch (Exception e) {
+            throw new RequestException("UNAUTHORIZED USER");
+        }
+
     }
 
     // Check if token is expired

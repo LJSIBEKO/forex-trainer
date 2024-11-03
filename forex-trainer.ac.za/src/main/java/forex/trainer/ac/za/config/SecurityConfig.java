@@ -64,7 +64,7 @@ public class SecurityConfig
         log.info("Configuring CORS");
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Adjust origins as needed
+        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Adjust origins as needed
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Accept", "Content-Type"));
         configuration.setAllowCredentials(true); // Enable if cookies/auth headers are used cross-domain

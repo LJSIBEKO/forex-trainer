@@ -1,4 +1,4 @@
-package forex.trainer.ac.za.repository;
+package forex.trainer.ac.za.repository.account;
 
 import forex.trainer.ac.za.model.account.UserAccount;
 import org.springframework.data.jpa.repository.JpaRepository;

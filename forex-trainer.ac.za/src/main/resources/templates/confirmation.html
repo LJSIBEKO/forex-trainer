@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Account Confirmation</h1>
+    <p>Hello <span th:text="${clientName}"></span>,</p>
+    <p>Thank you for registering! Please confirm your account by clicking the button below:</p>
+    <a th:href="@{${confirmationUrl}}" class="button">Confirm Account</a>
+    <p>Your confirmation code: <strong th:text="${confirmationCode}"></strong></p>
+    <p>Thank you,<br>The Forex Trainer Team</p>
+</div>
+<div class="footer">This is an automated message. Please do not reply.</div>
+</body>
+</html>

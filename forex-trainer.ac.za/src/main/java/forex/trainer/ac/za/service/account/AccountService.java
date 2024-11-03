@@ -1,9 +1,12 @@
 package forex.trainer.ac.za.service.account;
 
+import forex.trainer.ac.za.dtos.account.confirm.ConfirmUserAccount;
 import forex.trainer.ac.za.dtos.account.login.LoginRequest;
 import forex.trainer.ac.za.dtos.account.login.LoginResponse;
 import forex.trainer.ac.za.model.account.AccountStatus;
 import forex.trainer.ac.za.model.account.UserAccount;
+
+import java.lang.module.Configuration;
 
 public interface AccountService {
     /**
@@ -47,4 +50,6 @@ public interface AccountService {
      * @param username the username of the account to be deleted
      */
     void deleteAccount(String username);
+
+    UserAccount confirmUserAccount(ConfirmUserAccount confirmUserAccount);
 }

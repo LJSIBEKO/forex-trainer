@@ -1,6 +1,7 @@
 package forex.trainer.ac.za.service.account.Impl;
 
 import forex.trainer.ac.za.config.jwt.JwtUtil;
+import forex.trainer.ac.za.dtos.account.confirm.ConfirmUserAccount;
 import forex.trainer.ac.za.dtos.account.login.LoginRequest;
 import forex.trainer.ac.za.dtos.account.login.LoginResponse;
 import forex.trainer.ac.za.exception.RequestException;
@@ -8,10 +9,14 @@ import forex.trainer.ac.za.model.account.AccountStatus;
 import forex.trainer.ac.za.model.account.Permission;
 import forex.trainer.ac.za.model.account.Role;
 import forex.trainer.ac.za.model.account.UserAccount;
-import forex.trainer.ac.za.repository.UserAccountRepository;
+import forex.trainer.ac.za.model.account.confirmation.AccountConfirmation;
+import forex.trainer.ac.za.repository.account.UserAccountRepository;
+import forex.trainer.ac.za.repository.account_confirmation.AccountConfirmationRepository;
 import forex.trainer.ac.za.service.account.AccountService;
+import forex.trainer.ac.za.utils.EmailUtil;
 import forex.trainer.ac.za.utils.EmailValidator;
 import forex.trainer.ac.za.utils.PhoneNumberValidator;
+import forex.trainer.ac.za.utils.RandomCodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +26,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -42,6 +46,10 @@ public class AccountServiceImpl  implements AccountService
     private  AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private AccountConfirmationRepository accountConfirmationRepository;
+    @Autowired
+    private EmailUtil emailUtil;
 
 
     @Override
@@ -56,6 +64,10 @@ public class AccountServiceImpl  implements AccountService
 
         String formattedPhoneNumber = PhoneNumberValidator.validateAndFormatPhoneNumber(userAccount.getMobile());
 
+        UserAccount userAccountWithPhone = userAccountRepository.findByMobile(formattedPhoneNumber);
+        if (userAccountWithPhone != null)
+            throw new RequestException("Phone number already in use");
+
         newUserAccount.setMobile(formattedPhoneNumber);
 
         if (userAccountRepository.existsByUsername(userAccount.getUsername()))
@@ -69,7 +81,7 @@ public class AccountServiceImpl  implements AccountService
         newUserAccount.setMobile(formattedPhoneNumber);
 
         newUserAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
-        newUserAccount.setAccountStatus(AccountStatus.ACTIVE);
+        newUserAccount.setAccountStatus(AccountStatus.AWAITING_CONFIRMATION);
         List<Role> roles = new ArrayList<>();
         roles.add(Role.CUSTOMER);
         List<Permission>  permissions = new ArrayList<>();
@@ -80,7 +92,24 @@ public class AccountServiceImpl  implements AccountService
         newUserAccount.setRoles(roles);
         newUserAccount.setPermissions(permissions);
 
-        return userAccountRepository.save(newUserAccount);
+        UserAccount savedUserAccount = userAccountRepository.save(newUserAccount);
+
+       sendAccountConfirmation(savedUserAccount);
+
+
+        return savedUserAccount;
+    }
+
+    private void sendAccountConfirmation(UserAccount account)
+    {
+        AccountConfirmation accountConfirmation = new AccountConfirmation();
+        accountConfirmation.setAccount(account);
+        accountConfirmation.setConfirmed(false);
+        accountConfirmation.setConfirmationExpiryDate(LocalDateTime.now().plusMinutes(10));
+        accountConfirmation.setConfirmationCode(RandomCodeUtil.generateUniqueRandomNumbersAsString(5));
+        accountConfirmationRepository.save(accountConfirmation);
+
+        emailUtil.sendConfirmationWEmail(accountConfirmation);
     }
 
     @Override
@@ -132,6 +161,47 @@ public class AccountServiceImpl  implements AccountService
 
     @Override
     public void deleteAccount(String username) {
+
+    }
+
+    @Override
+    public UserAccount confirmUserAccount(ConfirmUserAccount confirmUserAccount) {
+        UserAccount userAccount = userAccountRepository.getReferenceById(confirmUserAccount.getAccountId());
+
+        if(userAccount==null)
+            throw new RequestException("User not found");
+
+        if(userAccount.getAccountStatus().equals(AccountStatus.AWAITING_CONFIRMATION)){
+
+            AccountConfirmation accountConfirmation = accountConfirmationRepository.findLatestAccountConfirmation(userAccount);
+
+            if(accountConfirmation==null)
+                throw new RequestException("Account confirmation is invalid");
+
+            if(accountConfirmation.getConfirmationExpiryDate().isBefore(LocalDateTime.now()))
+                throw new RequestException("Account confirmation is expired");
+
+            if(accountConfirmation.getConfirmationCode()==null)
+                throw new RequestException("Account confirmation code is invalid");
+
+            if(accountConfirmation.getAttempts()>3){
+                sendAccountConfirmation(userAccount);
+                throw new RequestException("OTP is expired new one has been sent to you please view your emails");
+            }
+
+            if(!accountConfirmation.getConfirmationCode().equals(confirmUserAccount.getCode())){
+                accountConfirmation.setAttempts(accountConfirmation.getAttempts()+1);
+                accountConfirmationRepository.save(accountConfirmation);
+                throw new RequestException("OTP is incorrect");
+            }
+
+
+            userAccount.setAccountStatus(AccountStatus.ACTIVE);
+            return userAccountRepository.save(userAccount);
+        }else{
+            throw new RequestException("User not AWAITING_CONFIRMATION");
+        }
+
 
     }
 }

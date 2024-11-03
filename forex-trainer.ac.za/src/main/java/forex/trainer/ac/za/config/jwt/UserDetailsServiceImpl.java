@@ -1,6 +1,6 @@
 package forex.trainer.ac.za.config.jwt;
 
-import forex.trainer.ac.za.repository.UserAccountRepository;
+import forex.trainer.ac.za.repository.account.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
