@@ -151,6 +151,7 @@ public class AccountServiceImpl  implements AccountService
 
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setToken(token);
+            loginResponse.setAccount(userAccount);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-'T'HH:mm");
             loginResponse.setExpires(LocalDateTime.now().plusHours(24).format(formatter));
             return loginResponse;
