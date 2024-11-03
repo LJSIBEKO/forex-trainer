@@ -30,7 +30,7 @@ public class EmailUtil
         String clientName = accountConfirmation.getAccount().getUsername();
         String subject = "Account Confirmation";
         String confirmationCode = accountConfirmation.getConfirmationCode();
-        String confirmationUrl = "https://example.com/confirm?code=" + confirmationCode; // Change this to your actual confirmation URL
+        String confirmationUrl = "http://localhost:4200/account/confirmation/" + accountConfirmation.getAccount().getId(); // Change this to your actual confirmation URL
 
         // Prepare the email content using Thymeleaf
         String htmlContent = generateHtmlContent(clientName, confirmationCode, confirmationUrl);

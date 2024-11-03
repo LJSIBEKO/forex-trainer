@@ -106,7 +106,7 @@ public class AccountServiceImpl  implements AccountService
         accountConfirmation.setAccount(account);
         accountConfirmation.setConfirmed(false);
         accountConfirmation.setConfirmationExpiryDate(LocalDateTime.now().plusMinutes(10));
-        accountConfirmation.setConfirmationCode(RandomCodeUtil.generateUniqueRandomNumbersAsString(5));
+        accountConfirmation.setConfirmationCode(RandomCodeUtil.generateUniqueRandomNumbersAsString(1));
         accountConfirmationRepository.save(accountConfirmation);
 
         emailUtil.sendConfirmationWEmail(accountConfirmation);
