@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -69,15 +70,16 @@ public class AccountServiceImpl  implements AccountService
             throw new RequestException("Phone number already in use");
 
         newUserAccount.setMobile(formattedPhoneNumber);
+        newUserAccount.setUsername(userAccount.getEmail().toLowerCase());
 
-        if (userAccountRepository.existsByUsername(userAccount.getUsername()))
+        if (userAccountRepository.existsByUsername(userAccount.getEmail().toLowerCase()))
             throw new RequestException( "Username already exists");
 
-        if (userAccountRepository.existsByEmail(userAccount.getEmail()))
+        if (userAccountRepository.existsByEmail(userAccount.getEmail().toLowerCase()))
             throw new RequestException("Email already exists");
 
-        newUserAccount.setUsername(userAccount.getUsername());
-        newUserAccount.setEmail(userAccount.getEmail());
+        newUserAccount.setUsername(userAccount.getEmail().toLowerCase());
+        newUserAccount.setEmail(userAccount.getEmail().toLowerCase());
         newUserAccount.setMobile(formattedPhoneNumber);
 
         newUserAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
@@ -203,5 +205,11 @@ public class AccountServiceImpl  implements AccountService
         }
 
 
+    }
+
+    @Override
+    public UserAccount findById(UUID id) {
+        log.info(" id {}",id);
+        return userAccountRepository.findById(id).orElseThrow(() -> new RequestException("User not found"));
     }
 }
