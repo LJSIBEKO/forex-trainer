@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -39,4 +40,8 @@ public class SessionController
         return new ResponseEntity<>(accountService.confirmUserAccount(confirmUserAccount),HttpStatus.OK);
     }
 
+    @GetMapping("view")
+    public ResponseEntity<List<UserAccount>> getViewAccount(){
+        return new ResponseEntity<>(accountService.getAllAccounts(), HttpStatus.OK);
+    }
 }

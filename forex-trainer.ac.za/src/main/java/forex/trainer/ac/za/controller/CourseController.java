@@ -20,7 +20,7 @@ public class CourseController
     @Autowired
     private CourseService courseService;
 
-    @RequestMapping("view")
+    @GetMapping("view")
     public ResponseEntity<List<Course>> view(){
         return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
     }
