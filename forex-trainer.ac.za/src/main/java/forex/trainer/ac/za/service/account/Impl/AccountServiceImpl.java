@@ -213,4 +213,9 @@ public class AccountServiceImpl  implements AccountService
         log.info(" id {}",id);
         return userAccountRepository.findById(id).orElseThrow(() -> new RequestException("User not found"));
     }
+
+    @Override
+    public List<UserAccount> getAllAccounts(){
+        return userAccountRepository.findAll();
+    }
 }

@@ -7,6 +7,7 @@ import forex.trainer.ac.za.model.account.AccountStatus;
 import forex.trainer.ac.za.model.account.UserAccount;
 
 import java.lang.module.Configuration;
+import java.util.List;
 import java.util.UUID;
 
 public interface AccountService {
@@ -54,4 +55,6 @@ public interface AccountService {
 
     UserAccount confirmUserAccount(ConfirmUserAccount confirmUserAccount);
     UserAccount findById(UUID id);
+
+    List<UserAccount> getAllAccounts();
 }
