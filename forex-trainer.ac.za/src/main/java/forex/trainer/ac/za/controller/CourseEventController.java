@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("event")
@@ -29,5 +30,10 @@ public class CourseEventController {
     @PutMapping("cancel/{eventId}")
     public ResponseEntity<CourseEvent> cancelEvent(@PathVariable String eventId){
         return new ResponseEntity<>(courseEventService.cancelEvent(eventId), HttpStatus.OK);
+    }
+
+    @GetMapping("user/events/{userId}")
+    public ResponseEntity<List<CourseEvent>> getEventsForUser(@PathVariable UUID userId){
+        return new ResponseEntity<>(courseEventService.getEventsForUser(userId),HttpStatus.OK);
     }
 }

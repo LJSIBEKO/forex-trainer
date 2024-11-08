@@ -48,7 +48,9 @@ public class SecurityConfig
                 .cors(Customizer.withDefaults())
                 .authorizeRequests(authorize -> {
                     authorize
-                            .requestMatchers("/sessions/**").permitAll()
+                            .requestMatchers("/sessions/**",
+                                    "/api/payfast/**").permitAll()
+
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(session ->

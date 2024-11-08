@@ -63,5 +63,10 @@ public class CourseEventServiceImpl implements CourseEventService {
 
     }
 
+    @Override
+    public List<CourseEvent> getEventsForUser(UUID userId) {
+        return List.of();
+    }
+
 
 }
