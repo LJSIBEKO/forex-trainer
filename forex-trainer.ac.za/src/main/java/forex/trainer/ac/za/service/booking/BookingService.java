@@ -1,6 +1,7 @@
 package forex.trainer.ac.za.service.booking;
 
 
+import forex.trainer.ac.za.dtos.BookingStatsDTO;
 import forex.trainer.ac.za.dtos.CreateBooking;
 import forex.trainer.ac.za.exception.RequestException;
 import forex.trainer.ac.za.model.account.UserAccount;
@@ -67,5 +68,34 @@ public class BookingService
         return  bookingRepository.save(booking);
     }
 
+
+    public List<Booking> getAllBookingsForUser(UUID userId)
+    {
+        UserAccount userAccount = userAccountRepository.findById(userId).orElseThrow(() -> new RequestException("User Not Found"));
+
+        return bookingRepository.findByCustomerId(userAccount.getId());
+    }
+
+
+
+    public BookingStatsDTO getBookingStatistics() {
+        long totalBookings = bookingRepository.countTotalBookings();
+        long completedPayments = bookingRepository.countCompletedPayments();
+        long pendingPayments = bookingRepository.countPendingPayments();
+        Double totalRevenue = bookingRepository.calculateTotalRevenue();
+
+        // Handle null case for totalRevenue if no bookings are paid
+        if (totalRevenue == null) {
+            totalRevenue = 0.0;
+        }
+
+        BookingStatsDTO stats = new BookingStatsDTO();
+        stats.setTotalBookings((int) totalBookings);
+        stats.setCompletedPayments((int) completedPayments);
+        stats.setPendingPayments((int) pendingPayments);
+        stats.setTotalRevenue(totalRevenue);
+
+        return stats;
+    }
 
 }

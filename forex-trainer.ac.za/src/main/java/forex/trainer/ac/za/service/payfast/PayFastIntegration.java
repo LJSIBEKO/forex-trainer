@@ -19,7 +19,7 @@ public class PayFastIntegration
     private static final String BASE_URL = "http://localhost:4200";
     private static final String RETURN_URL = BASE_URL + "/payment-success";
     private static final String CANCEL_URL = BASE_URL + "/payment-cancel";
-    private static final String NOTIFY_URL = "http://localhost:8081/api/payfast/payment-notify";
+    private static final String NOTIFY_URL = "http://localhost:8081/api/payfast/payment/notify";
 
     private final BookingRepository bookingRepository;
 

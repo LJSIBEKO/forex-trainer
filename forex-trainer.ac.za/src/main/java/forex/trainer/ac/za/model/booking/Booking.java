@@ -21,6 +21,7 @@ public class Booking extends AbstractPersistenceEntity
     @JoinColumn(name = "cource_id")
     private Course cource;
 
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private UserAccount owner;

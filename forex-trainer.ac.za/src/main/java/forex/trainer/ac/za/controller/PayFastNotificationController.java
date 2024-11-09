@@ -18,7 +18,7 @@ public class PayFastNotificationController
     @Autowired
     private PayFastIntegration payFastIntegration;
 
-    @PostMapping("/payment-notify")
+    @PostMapping("/payment/notify")
     public String handleNotification(@RequestBody Map<String,String> notification) {
       log.info("Received notification: {}", notification);
         return "Notification received";
