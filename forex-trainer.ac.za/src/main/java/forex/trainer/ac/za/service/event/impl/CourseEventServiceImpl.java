@@ -37,10 +37,17 @@ public class CourseEventServiceImpl implements CourseEventService {
 
     @Override
     public CourseEvent createEvent(CourseEvent event, String courseId) {
+
         Course course = courseService.getCourse(UUID.fromString(courseId));
 
         if(course == null)
             throw new RequestException("Course not found");
+
+        if(event.getEventName().isEmpty())
+            throw new RequestException("Event name is empty");
+
+        if(event.getDescription().isEmpty())
+            throw new RequestException("Description is empty");
 
 
         System.out.println(event.getEventName());
@@ -53,6 +60,9 @@ public class CourseEventServiceImpl implements CourseEventService {
     @Override
     public List<CourseEvent> getEventsForCourse(String courseId) {
         System.out.println("getting events");
+        if(courseId.equals("ALL"))
+            return courseEventRepository.findAll();
+
         return courseEventRepository.findByCourseId(UUID.fromString(courseId));
     }
 
